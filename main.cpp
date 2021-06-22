@@ -59,7 +59,7 @@ std::string get_max_palindrome(std::string s, int left, int right, t_elem** m_ta
             return result;
         }
         else {
-            return "";
+            return s.substr(l, 1);
         }
     }
 
