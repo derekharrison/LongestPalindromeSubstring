@@ -6,9 +6,9 @@
  */
 
 #include <iostream>
-#include <map>
 #include <stdio.h>
 #include <string>
+#include <time.h>
 
 int num_calls_performed = 0;
 
@@ -68,7 +68,7 @@ std::string get_max_palindrome(std::string s, int left, int right, t_elem** m_ta
     if(is_even) {
         cut = size / 2 - 1 + l;
         std::string left_cut = s.substr(l, cut + 1);
-        std::string right_cut = s.substr(cut + 1, r);
+        std::string right_cut = s.substr(cut + 1, r - cut);
         std::string right_cut_reverse = reverse_string(right_cut);
 
         if(left_cut == right_cut_reverse) {
@@ -84,7 +84,7 @@ std::string get_max_palindrome(std::string s, int left, int right, t_elem** m_ta
     else {
         cut = size / 2 + l;
         std::string left_cut = s.substr(l, cut);
-        std::string right_cut = s.substr(cut + 1, r);
+        std::string right_cut = s.substr(cut + 1, r - cut);
         std::string right_cut_reverse = reverse_string(right_cut);
 
         if(left_cut == right_cut_reverse) {
@@ -162,14 +162,167 @@ std::string max_palindrome(std::string s) {
     return get_max_palindrome(s, left, right, m_table);
 }
 
+std::string get_max_palindrome_not_memoized(std::string s, int left, int right) {
+
+    std::string result = s;
+    int size = s.length();
+    int cut = size / 2;
+    bool is_palindrome = false;
+    int l = 0;
+    int r = size - 1;
+
+    num_calls_performed++;
+
+    if(size == 0) {
+        result = "";
+        return result;
+    }
+
+    if(size == 1) {
+        return result;
+    }
+
+    if(size == 2) {
+        if(result[0] == result[1]) {
+            return result;
+        }
+        else {
+            return s.substr(l, 1);
+        }
+    }
+
+    //Check if current string is palindrome
+    bool is_even = !(size % 2);
+    if(is_even) {
+        cut = size / 2 - 1 + l;
+        std::string left_cut = s.substr(l, cut + 1);
+        std::string right_cut = s.substr(cut + 1, r - cut);
+        std::string right_cut_reverse = reverse_string(right_cut);
+
+        if(left_cut == right_cut_reverse) {
+            is_palindrome = true;
+            return result;
+        }
+        else {
+
+        }
+    }
+    else {
+        cut = size / 2 + l;
+        std::string left_cut = s.substr(l, cut);
+        std::string right_cut = s.substr(cut + 1, r - cut);
+        std::string right_cut_reverse = reverse_string(right_cut);
+
+        if(left_cut == right_cut_reverse) {
+            is_palindrome = true;
+            return result;
+        }
+    }
+
+    //If current string is not palindrome scan substrings for palindromes
+    if(!is_palindrome) {
+        std::string string1;
+        std::string string2;
+        int max_size = -100;
+        for(int cut_c = l + 1; cut_c <= r; ++cut_c) {
+            std::string substring1 = s.substr(l, cut_c);
+            std::string substring2 = s.substr(cut_c, r + 1 - cut_c);
+
+            string1 = get_max_palindrome_not_memoized(substring1, l, cut_c);
+            string2 = get_max_palindrome_not_memoized(substring2, cut_c, r + 1);
+
+            int size1 = string1.length();
+            int size2 = string2.length();
+            if(size1 > max_size) {
+                max_size = size1;
+                result = string1;
+            }
+            if(size2 > max_size) {
+                max_size = size2;
+                result = string2;
+            }
+        }
+
+        //If result is not updated, no palindromes are found
+        if(result == s) {
+
+            result = "";
+
+            return result;
+        }
+    }
+
+    return result;
+}
+
+std::string max_palindrome_not_memoized(std::string s) {
+
+    int left = 0;
+    int right = s.length();
+
+    return get_max_palindrome_not_memoized(s, left, right);
+}
+
+bool is_palindrome(std::string s) {
+    std::string result = s;
+    int size = s.length();
+    int cut = size / 2;
+    bool is_palindrome = false;
+    int l = 0;
+    int r = size - 1;
+
+    if(size >= 0 && size <= 2) {
+        return true;
+    }
+
+    //Check if current string is palindrome
+    bool is_even = !(size % 2);
+    if(is_even) {
+        cut = size / 2 - 1 + l;
+        std::string left_cut = s.substr(l, cut + 1);
+        std::string right_cut = s.substr(cut + 1, r - cut);
+        std::string right_cut_reverse = reverse_string(right_cut);
+
+        if(left_cut == right_cut_reverse) {
+            return is_palindrome = true;
+        }
+        else {
+
+        }
+    }
+    else {
+        cut = size / 2 + l;
+        std::string left_cut = s.substr(l, cut);
+        std::string right_cut = s.substr(cut + 1, r - cut);
+        std::string right_cut_reverse = reverse_string(right_cut);
+
+        if(left_cut == right_cut_reverse) {
+            return is_palindrome = true;
+        }
+    }
+
+    return is_palindrome;
+}
+
 int main(int argc, char* argv[]) {
 
-    std::string s = "xaabacxcabaaxcabaasdffhxxaabacxcabaaxcabaaxxcabaaxxaabacxcabaaxca";
+    clock_t start, end;
+    double execution_time;
+
+    start = clock();
+
+    std::string s = "xaabacxcabaaxcabaasdffhxxaabacxcghdabaaxcabaaxxcabaaxxaabacxcabaaxca";
     std::string maximum_palindrome = max_palindrome(s);
+    bool is_result_palindrome = is_palindrome(maximum_palindrome);
+
+    end = clock();
+    execution_time = ((double) (end - start)) / CLOCKS_PER_SEC;
 
     std::cout << "max palindrome: " << maximum_palindrome << std::endl;
     std::cout << "num calls performed: " << num_calls_performed << std::endl;
     std::cout << "input size: " << s.length() << std::endl;
+    std::cout << "execution time: " << execution_time << std::endl;
+    std::cout << "is the result a palindrome: " << is_result_palindrome << std::endl;
     std::cout << "done" << std::endl;
 
     return 0;
