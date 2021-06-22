@@ -45,6 +45,7 @@ std::string get_max_palindrome(std::string s, int left, int right, t_elem** m_ta
         m_table[left][right].s = result;
         return result;
     }
+
     if(size == 1) {
         m_table[left][right].is_set = true;
         m_table[left][right].s = result;
@@ -62,7 +63,7 @@ std::string get_max_palindrome(std::string s, int left, int right, t_elem** m_ta
         }
     }
 
-    //Check is current string is palindrome
+    //Check if current string is palindrome
     bool is_even = !(size % 2);
     if(is_even) {
         cut = size / 2 - 1 + l;
@@ -94,6 +95,7 @@ std::string get_max_palindrome(std::string s, int left, int right, t_elem** m_ta
         }
     }
 
+    //If current string is not palindrome scan substrings for palindromes
     if(!is_palindrome) {
         std::string string1;
         std::string string2;
@@ -120,6 +122,7 @@ std::string get_max_palindrome(std::string s, int left, int right, t_elem** m_ta
             }
         }
 
+        //If result is not updated, no palindromes are found
         if(result == s) {
 
             result = "";
