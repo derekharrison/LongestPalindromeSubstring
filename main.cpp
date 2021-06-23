@@ -254,7 +254,7 @@ std::string get_max_palindrome(std::string s, int left, int right, t_elem** m_ta
             else { string1 = get_max_palindrome(substring1, left, left + cut_c, m_table); }
 
             if(m_table[left][right].is_set) { string2 = m_table[left][right].s; }
-            else { string2 = get_max_palindrome(substring2, left + cut_c, left + r - 1, m_table); }
+            else { string2 = get_max_palindrome(substring2, left + cut_c, left + r, m_table); }
 
 
             int size1 = string1.length();
@@ -294,7 +294,7 @@ std::string max_palindrome(std::string s) {
     //Initialize memo_table
     t_elem** m_table2 = new t_elem*[size+1];
     int left = 0;
-    int right = size - 1;
+    int right = size;
     for(int i = 0; i < size + 1; ++i) {
         m_table2[i] = new t_elem[size+1];
     }
