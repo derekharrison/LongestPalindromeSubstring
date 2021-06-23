@@ -254,7 +254,7 @@ std::string get_max_palindrome(std::string s, int left, int right, t_elem** m_ta
             else { string1 = get_max_palindrome(substring1, left, left + cut_c, m_table); }
 
             if(m_table[left][right].is_set) { string2 = m_table[left][right].s; }
-            else { string2 = get_max_palindrome(substring2, left + cut_c, left + r, m_table); }
+            else { string2 = get_max_palindrome(substring2, left + cut_c, left + r - 1, m_table); }
 
 
             int size1 = string1.length();
