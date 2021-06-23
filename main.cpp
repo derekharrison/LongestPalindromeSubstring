@@ -28,140 +28,6 @@ std::string reverse_string(std::string s) {
     return result;
 }
 
-std::string get_max_palindrome(std::string s, int left, int right, t_elem** m_table) {
-
-    std::string result = s;
-    int size = s.length();
-    int cut = size / 2;
-    bool is_palindrome = false;
-    int l = 0;
-    int r = size - 1;
-
-    num_calls_performed++;
-
-    if(size == 0) {
-        result = "";
-        m_table[left][right].is_set = true;
-        m_table[left][right].s = result;
-        return result;
-    }
-
-    if(size == 1) {
-        m_table[left][right].is_set = true;
-        m_table[left][right].s = result;
-        return result;
-    }
-
-    if(size == 2) {
-        if(result[0] == result[1]) {
-            m_table[left][right].is_set = true;
-            m_table[left][right].s = result;
-            return result;
-        }
-        else {
-            return s.substr(l, 1);
-        }
-    }
-
-    //Check if current string is palindrome
-    bool is_even = !(size % 2);
-    if(is_even) {
-        cut = size / 2 - 1 + l;
-        std::string left_cut = s.substr(l, cut + 1);
-        std::string right_cut = s.substr(cut + 1, r - cut);
-        std::string right_cut_reverse = reverse_string(right_cut);
-
-        if(left_cut == right_cut_reverse) {
-            is_palindrome = true;
-            m_table[left][right].is_set = true;
-            m_table[left][right].s = result;
-            return result;
-        }
-        else {
-
-        }
-    }
-    else {
-        cut = size / 2 + l;
-        std::string left_cut = s.substr(l, cut);
-        std::string right_cut = s.substr(cut + 1, r - cut);
-        std::string right_cut_reverse = reverse_string(right_cut);
-
-        if(left_cut == right_cut_reverse) {
-            is_palindrome = true;
-            m_table[left][right].is_set = true;
-            m_table[left][right].s = result;
-            return result;
-        }
-    }
-
-    //If current string is not palindrome scan substrings for palindromes
-    if(!is_palindrome) {
-        std::string string1;
-        std::string string2;
-        int max_size = -100;
-        for(int cut_c = l + 1; cut_c <= r; ++cut_c) {
-            std::string substring1 = s.substr(l, cut_c);
-            std::string substring2 = s.substr(cut_c, r + 1 - cut_c);
-
-            if(m_table[left][right].is_set) { string1 = m_table[left][right].s; }
-            else { string1 = get_max_palindrome(substring1, l, cut_c, m_table); }
-
-            if(m_table[left][right].is_set) { string2 = m_table[left][right].s; }
-            else { string2 = get_max_palindrome(substring2, cut_c, r + 1, m_table); }
-
-            int size1 = string1.length();
-            int size2 = string2.length();
-            if(size1 > max_size) {
-                max_size = size1;
-                result = string1;
-            }
-            if(size2 > max_size) {
-                max_size = size2;
-                result = string2;
-            }
-        }
-
-        //If result is not updated, no palindromes are found
-        if(result == s) {
-
-            result = "";
-
-            m_table[left][right].is_set = true;
-            m_table[left][right].s = result;
-
-            return result;
-        }
-    }
-
-    m_table[left][right].is_set = true;
-    m_table[left][right].s = result;
-
-    return result;
-}
-
-std::string max_palindrome(std::string s) {
-
-    int size = s.length();
-
-    //Initialize memo_table
-    t_elem** m_table = new t_elem*[size+1];
-    int left = 0;
-    int right = size;
-    for(int i = 0; i < size + 1; ++i) {
-        m_table[i] = new t_elem[size+1];
-    }
-
-    for(int i = 0; i < size + 1; ++i) {
-        for(int j = 0; j < size + 1; ++j) {
-            m_table[i][j].is_set = false;
-            m_table[i][j].s = "";
-        }
-    }
-
-    return get_max_palindrome(s, left, right, m_table);
-}
-
 std::string get_max_palindrome_not_memoized(std::string s, int left, int right) {
 
     std::string result = s;
@@ -302,6 +168,146 @@ bool is_palindrome(std::string s) {
     }
 
     return is_palindrome;
+}
+
+std::string get_max_palindrome(std::string s, int left, int right, t_elem** m_table) {
+
+    std::string result = s;
+    int size = s.length();
+    int cut = size / 2;
+    bool is_palindrome = false;
+    int l = 0;
+    int r = size - 1;
+
+    num_calls_performed++;
+
+    if(size == 0) {
+        m_table[left][right].is_set = true;
+        m_table[left][right].s = s;
+        std::string result = s;
+        return result;
+    }
+
+    if(size == 1) {
+        result = s;
+        m_table[left][right].is_set = true;
+        m_table[left][right].s = result;
+        return result;
+    }
+
+    if(size == 2) {
+        if(result[0] == result[1]) {
+            result = s;
+            m_table[left][right].is_set = true;
+            m_table[left][right].s = result;
+            return result;
+        }
+        else {
+            result = result.substr(l, 1);
+            return result;
+        }
+    }
+
+    //Check if current string is palindrome
+    bool is_even = !(size % 2);
+    if(is_even) {
+        cut = size / 2 - 1 + l;
+        std::string left_cut = s.substr(l, cut + 1);
+        std::string right_cut = s.substr(cut + 1, r - cut);
+        std::string right_cut_reverse = reverse_string(right_cut);
+
+        if(left_cut == right_cut_reverse) {
+            is_palindrome = true;
+            m_table[left][right].is_set = true;
+            m_table[left][right].s = s;
+            return result;
+        }
+        else {
+
+        }
+    }
+    else {
+        cut = size / 2 + l;
+        std::string left_cut = s.substr(l, cut);
+        std::string right_cut = s.substr(cut + 1, r - cut);
+        std::string right_cut_reverse = reverse_string(right_cut);
+
+        if(left_cut == right_cut_reverse) {
+            is_palindrome = true;
+            m_table[left][right].is_set = true;
+            m_table[left][right].s = s;
+            return result;
+        }
+    }
+
+    //If current string is not palindrome scan substrings for palindromes
+    if(!is_palindrome) {
+        std::string string1;
+        std::string string2;
+
+        int max_size = -100;
+        for(int cut_c = l + 1; cut_c <= r; ++cut_c) {
+            if(cut_c != cut) {
+                std::string substring1 = s.substr(l, cut_c);
+                std::string substring2 = s.substr(cut_c, r + 1 - cut_c);
+
+                if(m_table[left][right].is_set) { string1 = m_table[left][right].s; }
+                else { string1 = get_max_palindrome(substring1, left, left + cut_c, m_table); }
+
+                if(m_table[left][right].is_set) { string2 = m_table[left][right].s; }
+                else { string2 = get_max_palindrome(substring2, left + cut_c, left + r + 1, m_table); }
+
+                int size1 = string1.length();
+                int size2 = string2.length();
+                if(size1 > max_size) {
+                    max_size = size1;
+                    result = string1;
+                }
+                if(size2 > max_size) {
+                    max_size = size2;
+                    result = string2;
+                }
+            }
+        }
+
+        //If result is not updated, no palindromes are found
+        if(result == s) {
+
+            result = "";
+
+            m_table[left][right].is_set = true;
+            m_table[left][right].s = result;
+
+            return result;
+        }
+    }
+
+    m_table[left][right].is_set = true;
+    m_table[left][right].s = result;
+
+    return result;
+}
+
+std::string max_palindrome(std::string s) {
+
+    int size = s.length();
+
+    //Initialize memo_table
+    t_elem** m_table2 = new t_elem*[size+1];
+    int left = 0;
+    int right = size;
+    for(int i = 0; i < size + 1; ++i) {
+        m_table2[i] = new t_elem[size+1];
+    }
+
+    for(int i = 0; i < size + 1; ++i) {
+        for(int j = 0; j < size + 1; ++j) {
+            m_table2[i][j].is_set = false;
+            m_table2[i][j].s = s;
+        }
+    }
+
+    return get_max_palindrome(s, left, right, m_table2);
 }
 
 int main(int argc, char* argv[]) {
