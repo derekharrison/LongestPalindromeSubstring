@@ -251,12 +251,11 @@ std::string get_max_palindrome(std::string s, int left, int right, t_elem** m_ta
             std::string substring1 = s.substr(l, cut_c);
             std::string substring2 = s.substr(cut_c, r - cut_c);
 
-            if(m_table[left][right].is_set) { string1 = m_table[left][right].s; }
+            if(m_table[left][left + cut_c].is_set) { string1 = m_table[left][left + cut_c].s; }
             else { string1 = get_max_palindrome(substring1, left, left + cut_c, m_table); }
 
-            if(m_table[left][right].is_set) { string2 = m_table[left][right].s; }
+            if(m_table[left + cut_c][left + r].is_set) { string2 = m_table[left + cut_c][left + r].s; }
             else { string2 = get_max_palindrome(substring2, left + cut_c, left + r, m_table); }
-
 
             int size1 = string1.length();
             int size2 = string2.length();
