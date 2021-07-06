@@ -138,7 +138,7 @@ bool is_palindrome(std::string s) {
     int l = 0;
     int r = size - 1;
 
-    if(size >= 0 && size <= 2) {
+    if(size <= 1) {
         return true;
     }
 
